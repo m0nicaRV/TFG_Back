@@ -55,16 +55,22 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
+            'dni' => 'required|string|max:10|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
+            'telefono' => 'string|max:20',
             'password' => 'required|string|min:6',
+
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
 }
         $user = User::create([
             'name' => $request->name,
+            'dni'=>$request->dni,
             'email' => $request->email,
+            'telefono'=>$request->telefono,
             'password' => Hash::make($request->password)
+
 // 'role_id'=> "2"
         ]);
 //$token = Auth::login($user);
