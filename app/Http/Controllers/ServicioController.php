@@ -29,7 +29,7 @@ class ServicioController extends Controller
          try{
              $request->validate([
                  'titulo' => 'nullable|string',
-                 'precio' => 'required|numeric',
+                 'tiempo' => 'required|numeric',
                  'descripcion' => 'required|string',
                  'foto' => 'required',
 

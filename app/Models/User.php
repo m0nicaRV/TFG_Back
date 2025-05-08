@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use App\Models\Cita;
 class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -25,6 +26,8 @@ class User extends Authenticatable implements JWTSubject
         'telefono',
 
     ];
+
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -45,6 +48,11 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function citas()
+    {
+        return $this->hasMany(Cita::class, 'users_id');
+    }
 
     public function getJWTIdentifier()
     {

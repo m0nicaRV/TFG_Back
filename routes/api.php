@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\CitaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ServicioController;
+use App\Http\Controllers\CalendarController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,4 +33,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::controller(ServicioController::class)->group(function () {
     Route::post('store','store');
     Route::get('servicios','index');
+});
+
+Route::controller(CitaController::class)->group(function () {
+    Route::post('citas/store','store');
+    Route::get('citas/index','index');
+});
+
+Route::controller(CalendarController::class)->group(function () {
+    Route::get('calendar','token');
 });
