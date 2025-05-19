@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,8 +39,13 @@ Route::controller(ServicioController::class)->group(function () {
 Route::controller(CitaController::class)->group(function () {
     Route::post('citas/store','store');
     Route::get('citas/index','index');
+    Route::post('citas/aceptar/{id}','aceptCita');
 });
 
 Route::controller(CalendarController::class)->group(function () {
     Route::get('calendar','token');
+});
+
+Route::controller(UserController::class)->group(function () {
+    Route::get('users','index');
 });

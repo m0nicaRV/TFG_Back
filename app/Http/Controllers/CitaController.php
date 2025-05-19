@@ -20,6 +20,9 @@ class CitaController extends Controller
         ->get();
         return response()->json($citas);
     }
+    public function indexAcept(){
+
+    }
 
     public function store(Request $request){
         $request->validate([
@@ -59,5 +62,25 @@ class CitaController extends Controller
                 $disponibilidad->cita_id  = $cita_id;
                 $disponibilidad->save();
             }
+    }
+
+    public function aceptCita(Request $request, $id ){
+        $cita = Cita::findOrFail($id);
+        $request->validate([
+            'fecha_inicio' => 'required|date',
+            'fecha_fin'=>'required|date'
+        ]);
+        $input = $request->all();
+        try{
+            $cita->fecha_inicio=$request->input('fecha_inicio');
+            $cita->fecha_fin=$request->input('fecha_fin');
+            $cita->estado='aceptada';
+            $cita->save();
+            return $cita;
+
+        }catch (\Exception $exception){
+            return response()->json(['error' => $exception->getMessage()]);
+        }
+
     }
 }
