@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,4 +43,8 @@ Route::controller(CitaController::class)->group(function () {
 
 Route::controller(CalendarController::class)->group(function () {
     Route::get('calendar','token');
+});
+
+Route::controller(UserController::class)->group(function () {
+    Route::get('users','index');
 });
