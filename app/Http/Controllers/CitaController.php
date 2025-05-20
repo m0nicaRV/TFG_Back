@@ -65,7 +65,6 @@ class CitaController extends Controller
             }
     }
 
-<<<<<<< HEAD
     public function aceptarCita(Request $request, $id){
         $cita = Cita::findOrFail($id);
 
@@ -82,33 +81,13 @@ class CitaController extends Controller
             $cita->estado = 'aceptada';
             $cita->save();
             return $cita;
-=======
-    public function aceptCita(Request $request, $id ){
-        $cita = Cita::findOrFail($id);
-        $request->validate([
-            'fecha_inicio' => 'required|date',
-            'fecha_fin'=>'required|date'
-        ]);
-        $input = $request->all();
-        try{
-            $cita->fecha_inicio=$request->input('fecha_inicio');
-            $cita->fecha_fin=$request->input('fecha_fin');
-            $cita->estado='aceptada';
-            $cita->save();
-            return $cita;
-
->>>>>>> 11398f7fd8e3565ee877f38262843c3255728f70
         }catch (\Exception $exception){
             return response()->json(['error' => $exception->getMessage()]);
         }
 
-<<<<<<< HEAD
 
        
 
     }
 
-=======
-    }
->>>>>>> 11398f7fd8e3565ee877f38262843c3255728f70
 }

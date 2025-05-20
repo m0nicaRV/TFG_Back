@@ -40,11 +40,7 @@ Route::controller(ServicioController::class)->group(function () {
 Route::controller(CitaController::class)->group(function () {
     Route::post('citas/store','store');
     Route::get('citas/index','index');
-<<<<<<< HEAD
     route::post('citas/aceptar/{id}','aceptarCita');
-=======
-    Route::post('citas/aceptar/{id}','aceptCita');
->>>>>>> 11398f7fd8e3565ee877f38262843c3255728f70
 });
 
 Route::controller(CalendarController::class)->group(function () {
