@@ -5,30 +5,77 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Google\Client;
-use Google\Service\Drive;
+use Google\Service\Gmail;
 use Google\Service\Calendar;
+use Illuminate\Support\Facades\Storage;
 
 class CalendarController extends Controller
 {
-    public function token(){
 
-        $client = new Client();
-        $file=config_path('client_secret_65185540485-7hhkmbiso5t6rt2f54r4u062tesu9ej3.apps.googleusercontent.com.json');
+    const TOKEN_FILE_PATH='google_tokens/system_user_tokens.json';
 
-        $client->setAuthConfig( $file);
-        $client->addScope([\Google\Service\Calendar::CALENDAR_READONLY]);
-
-        $client->setRedirectUri('http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php');
-        $client->setAccessType('offline');
-        $sample_passthrough_value ='65185540485-7hhkmbiso5t6rt2f54r4u062tesu9ej3.apps.googleusercontent.com';
-        $client->setState($sample_passthrough_value);
-        $client->setLoginHint('daw10.2024@gmail.com');
-
-        $client->setPrompt('consent');
-        $client->setIncludeGrantedScopes(true);
-        return $auth_url= $client->createAuthUrl();
-        header('Location: ' . filter_var($auth_url, FILTER_SANITIZE_URL));
-        return $client->fetchAccessTokenWithAuthCode($_GET['code']);
-
+    private function loadTokens(): array
+    {
+        if (Storage::disk('local')->exists(self::TOKEN_FILE_PATH)) {
+            return json_decode(Storage::disk('local')->get(self::TOKEN_FILE_PATH), true);
+        }
+        return [];
     }
+
+    private function saveTokens(array $tokens): void
+    {
+        Storage::disk('local')->put(self::TOKEN_FILE_PATH, json_encode($tokens));
+    }
+
+    private function getGoogleClient(array $tokens = []): Client
+    {
+        $client = new Client();
+        $client->setClientId(env('GOOGLE_CLIENT_ID'));
+        $client->setClientSecret(env('GOOGLE_CLIENT_SECRET'));
+        $client->setRedirectUri(env('GOOGLE_REDIRECT_URI'));
+        $client->setAccessType('offline');
+        $client->setPrompt('select_account consent');
+
+        if (!empty($tokens)) {
+            $client->setAccessToken($tokens);
+        }
+
+        return $client;
+    }
+
+    public function redirectToGoogle()
+    {
+        $client = $this->getGoogleClient();
+        $client->addScope(Gmail::GMAIL_SEND);
+        $client->addScope(Calendar::CALENDAR_EVENTS);
+
+        $authUrl = $client->createAuthUrl();
+
+        return redirect()->away($authUrl);
+    }
+
+    public function handleGoogleCallback(Request $request)
+    {
+        $client = $this->getGoogleClient();
+
+        if ($request->missing('code')) {
+            $error = $request->input('error', 'access_denied');
+            return view('auth.google-callback-script', ['status' => 'error', 'message' => $error]);
+        }
+
+        try {
+            $accessToken = $client->fetchAccessTokenWithAuthCode($request->code);
+
+            $this->saveTokens($accessToken);
+
+            return view('auth.google-callback-script', ['status' => 'success', 'message' => 'Autenticación exitosa']);
+
+        } catch (Exception $e) {
+            \Log::error('Error en el callback de Google: ' . $e->getMessage());
+            return view('auth.google-callback-script', ['status' => 'error', 'message' => 'Error en autenticación: ' . $e->getMessage()]);
+        }
+    }
+
+
+
 }

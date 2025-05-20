@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('disponibilidad', function (Blueprint $table) {
+        Schema::create('disponibilidads', function (Blueprint $table) {
             $table->id();
             $table->time('inicio');
             $table->time('fin');
