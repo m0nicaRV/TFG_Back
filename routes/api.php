@@ -24,6 +24,7 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('logout', 'logout');
     Route::post('refresh', 'refresh');
     Route::get('me', 'me');
+    Route::get('users', 'index');
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -38,6 +39,7 @@ Route::controller(ServicioController::class)->group(function () {
 Route::controller(CitaController::class)->group(function () {
     Route::post('citas/store','store');
     Route::get('citas/index','index');
+    route::post('citas/aceptar/{id}','aceptarCita');
 });
 
 Route::controller(CalendarController::class)->group(function () {

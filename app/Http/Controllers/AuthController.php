@@ -108,12 +108,22 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        $user = Auth::user();
+            $user = Auth::user();
+            return response()->json([
+            'access_token' => Auth::refresh(),
+            'token_type' => 'bearer',
+            'expires_in' => env('JWT_TTL') * 60,
+            'user' => $user,
+        ]);
+    
+    }
+
+    public function index(){
+        $users = User::all();
         return response()->json([
-        'access_token' => Auth::refresh(),
-        'token_type' => 'bearer',
-        'expires_in' => env('JWT_TTL') * 60,
-        'user' => $user,
-    ]);
-}
+            'users' => $users,
+        ]);
+    }
+
+
 }

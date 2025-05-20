@@ -6,6 +6,7 @@ use App\Models\Cita;
 use App\Models\Disponibilidad;
 use App\Models\Servicio;
 use App\Models\User;
+use App\Rules\NoDateRangeOverlap;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -60,4 +61,30 @@ class CitaController extends Controller
                 $disponibilidad->save();
             }
     }
+
+    public function aceptarCita(Request $request, $id){
+        $cita = Cita::findOrFail($id);
+
+
+        try{
+            $request->validate([
+                'fecha_inicio' => 'required|date',
+                'fecha_fin' => 'required|date|after:fecha_inicio',new NoDateRangeOverlap('fecha_inicio', 'fecha_fin', Cita::class, $cita->id)
+
+            ]); 
+            $input = $request->all();
+            $cita->fecha_inicio = $input['fecha_inicio'];
+            $cita->fecha_fin = $input['fecha_fin'];
+            $cita->estado = 'aceptada';
+            $cita->save();
+            return $cita;
+        }catch (\Exception $exception){
+            return response()->json(['error' => $exception->getMessage()]);
+        }
+
+
+       
+
+    }
+
 }
