@@ -41,6 +41,8 @@ Route::controller(CitaController::class)->group(function () {
     Route::post('citas/store','store');
     Route::get('citas/index','index');
     route::post('citas/aceptar/{id}','aceptarCita');
+    route::delete('citas/eliminar/{id}','eliminarCita');
+    route::put('citas/editar/{id}','editarCita');
 });
 
 Route::controller(CalendarController::class)->group(function () {

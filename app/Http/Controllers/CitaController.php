@@ -90,4 +90,25 @@ class CitaController extends Controller
 
     }
 
+    public function eliminarCita($id){
+        $cita = Cita::findOrFail($id);
+        $cita->fecha_inicio = null;
+        $cita->fecha_fin = null;
+        $cita->estado = 'pendiente';
+        $cita->save();
+
+    }
+
+    public function editarCita(Request $request, $id){
+        $cita = Cita::findOrFail($id);
+        $request->validate([
+            'fecha_inicio' => 'required|date',
+            'fecha_fin' => 'required|date|after:fecha_inicio',new NoDateRangeOverlap('fecha_inicio', 'fecha_fin', Cita::class, $cita->id)
+
+        ]);
+        $input = $request->all();
+        $cita->update($input);
+        return response()->json($cita);
+    }
+
 }
