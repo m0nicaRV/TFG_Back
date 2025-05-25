@@ -40,14 +40,14 @@ Route::controller(ServicioController::class)->group(function () {
 Route::controller(CitaController::class)->group(function () {
     Route::post('citas/store','store');
     Route::get('citas/index','index');
+    Route::get('citas/indexAcept','indexAcept');
+    Route::get('citas/indexPend','indexpendiente');
+    Route::get('citas/indexpPast','indexpasada');
     route::post('citas/aceptar/{id}','aceptarCita');
     route::delete('citas/eliminar/{id}','eliminarCita');
     route::put('citas/editar/{id}','editarCita');
 });
 
-Route::controller(CalendarController::class)->group(function () {
-    Route::get('calendar','token');
-});
 
 Route::controller(UserController::class)->group(function () {
     Route::get('users','index');

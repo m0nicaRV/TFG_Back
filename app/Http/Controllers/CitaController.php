@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Rules\NoDateRangeOverlap;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Google\Service\Gmail\Message;
 
 class CitaController extends Controller
 {
@@ -22,8 +22,39 @@ class CitaController extends Controller
         return response()->json($citas);
     }
     public function indexAcept(){
+         $citas = Cita::with('disponibilidad')
+        ->with('servicio')
+        ->with('user')
+        ->where('estado','aceptada')
+        ->where('fecha_fin', '>=', now())
+        ->get();
+        return response()->json($citas);
 
     }
+
+    public function indexpendiente(){
+         $citas = Cita::with('disponibilidad')
+        ->with('servicio')
+        ->with('user')
+        ->where('estado','pendiente')
+        ->get();
+        return response()->json($citas);
+
+    }
+
+        public function indexpasada(){
+         $citas = Cita::with('disponibilidad')
+        ->with('servicio')
+        ->with('user')
+        ->where('estado','aceptada')
+        ->where('fecha_fin', '<', now())
+        ->get();
+        return response()->json($citas);
+
+    }
+
+
+
 
     public function store(Request $request){
         $request->validate([
@@ -67,8 +98,6 @@ class CitaController extends Controller
 
     public function aceptarCita(Request $request, $id){
         $cita = Cita::findOrFail($id);
-
-
         try{
             $request->validate([
                 'fecha_inicio' => 'required|date',
@@ -80,15 +109,14 @@ class CitaController extends Controller
             $cita->fecha_fin = $input['fecha_fin'];
             $cita->estado = 'aceptada';
             $cita->save();
+
             return $cita;
         }catch (\Exception $exception){
             return response()->json(['error' => $exception->getMessage()]);
         }
-
-
-       
-
+        
     }
+    
 
     public function eliminarCita($id){
         $cita = Cita::findOrFail($id);
